@@ -1,26 +1,67 @@
 @top Program { expression* }
 
-@skip { space | LineComment }
-
 expression {
+  String     |
+  GeomLayer  |
+  Option     |
+  Ggplot     
+}
+
+Ggplot {
+  "ggplot" "(" Identifier ("," aesMapping)? ")"
+}
+
+aesMapping {
+  "aes" "(" aesPair* ")"
+}
+
+value {
   Identifier |
-  String |
-  Boolean |
-  Application { "(" expression* ")" }
+  String 
+}
+
+aesPair {
+  Identifier "=" value ("," aesPair)?
+}
+
+GeomLayer {
+  "+" GeomType "(" aesMapping? ")"
+}
+
+Option {
+  "+" OptionType "(" optionValuePair* ")"
+}
+
+optionValuePair {
+  Identifier "=" value ("," optionValuePair)?
 }
 
 @tokens {
-  Identifier { $[a-zA-Z_\-0-9]+ }
-
-  String { '"' (!["\\] | "\\" _)* '"' }
-
-  Boolean { "#t" | "#f" }
-
-  LineComment { ";" ![\n]* }
-
-  space { $[ \t\n\r]+ }
-
+  "ggplot"
+  "aes"
+  "+"
   "(" ")"
+  GeomType { 
+    "geom_point" 
+  | "geom_line" 
+  | "geom_bar" 
+  | "geom_area" 
+  | "geom_ribbon" 
+  | "geom_hline"  
+  | "geom_vline"  
+  | "geom_boxplot"
+  | "geom_bin2d" }
+
+  Identifier  { $[a-zA-Z_\-0-9]+ }
+  String { '"' (!["\\] | "\\" _)* '"' }
+  OptionType {
+      "xlim"
+    | "ylim"
+    | "labs"
+    | "coord_flip"
+  }
+  space { $[ \t\n\r]+ }
 }
 
+@skip  {space}
 @detectDelim

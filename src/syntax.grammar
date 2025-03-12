@@ -1,66 +1,148 @@
 @top Program { expression* }
 
 expression {
-  String     |
   GeomLayer  |
-  Option     |
+  FacetLayer |
+  PlotOption    |
   Ggplot     
 }
 
 Ggplot {
-  "ggplot" "(" Identifier ("," aesMapping)? ")"
+  "ggplot" "(" DataIdentifier ("," AesMapping)?  ")"
 }
 
-aesMapping {
-  "aes" "(" aesPair* ")"
+AesMapping {
+  "aes" "(" AesPairList ")"
+}
+
+AesPairList {
+  AesPair ("," AesPair)*
+}
+
+AesPair {
+  AesIdentifier "=" value
+}
+
+AesIdentifier {
+  'fill' 
+| 'color'
+| 'size' 
+| 'shape'
+| 'x'
+| 'y'
+| 'src'
+| 'alpha'
+| 'label'
+| 'ymin'   // ribbon, link
+| 'ymax'   // ribbon, link
+| 'xmin'   // link
+| 'xmax'   // link
 }
 
 value {
-  Identifier |
-  String 
-}
-
-aesPair {
-  Identifier "=" value ("," aesPair)?
+  Number
+| String
+| Identifier
 }
 
 GeomLayer {
-  "+" GeomType "(" aesMapping? ")"
+   "+" GeomType "(" AesMapping? ("," Option)* ")"
+}
+
+GeomType { 
+   "geom_area"
+|  "geom_col"
+|  "geom_box"
+|  "geom_ribbon"
+|  "geom_bin2d"
+|  "geom_hex"
+|  "geom_smooth"
+|  "geom_line"
+|  "geom_rect"
+|  "geom_text"
+|  "geom_hline"
+|  "geom_vline"
+|  "geom_point" 
+|  "geom_jitter"
+|  "geom_auto"
+|  "geom_image"
+|  "geom_shiftx"
+|  "geom_cell"
+|  "geom_link"
+|  "annotate"
+}
+
+FacetLayer {
+  "+" FacetType "(" FacetExpression ")"
+}
+
+FacetType {
+  "facet_grid"
+| "facet_wrap"
+}
+
+FacetExpression {
+  FacetFormula ("," Option)*
+}
+
+FacetFormula {
+  "." "~" Identifier |
+  Identifier "~" "." |
+  Identifier "~" Identifier |
+  Identifier "~" |
+  "~" Identifier
 }
 
 Option {
-  "+" OptionType "(" optionValuePair* ")"
+  Identifier "=" value
 }
 
-optionValuePair {
-  Identifier "=" value ("," optionValuePair)?
+
+PlotOption {
+  "+" PlotOptionType "(" PlotOptionPairList? ")"
+}
+
+PlotOptionPairList {
+  PlotOptionPair ("," PlotOptionPair)*
+}
+
+
+PlotOptionPair {
+  Identifier "=" value 
+  | value
+}
+
+PlotOptionType {
+  "xlim"
+| "ylim"
+| "labs"
+| "scale_x_log10"
+| "scale_y_log10"
+| "coord_flip"
+| "layout"
+| "theme"
 }
 
 @tokens {
-  "ggplot"
-  "aes"
+  digit { $[0-9] }
+  "~"
   "+"
   "(" ")"
-  GeomType { 
-    "geom_point" 
-  | "geom_line" 
-  | "geom_bar" 
-  | "geom_area" 
-  | "geom_ribbon" 
-  | "geom_hline"  
-  | "geom_vline"  
-  | "geom_boxplot"
-  | "geom_bin2d" }
-
-  Identifier  { $[a-zA-Z_\-0-9]+ }
-  String { '"' (!["\\] | "\\" _)* '"' }
-  OptionType {
-      "xlim"
-    | "ylim"
-    | "labs"
-    | "coord_flip"
+  "ggplot"
+  Number {
+    "-"? digit+ ("." digit+)?  // Matches integers and floating-point numbers, optionally negative
   }
-  space { $[ \t\n\r]+ }
+  DataIdentifier  {
+    $[a-zA-Z_]$[a-zA-Z_0-9]*
+  }
+  Identifier  { 
+    $[a-zA-Z_]$[a-zA-Z_0-9]* //  $[a-zA-Z_\-0-9]+ 
+  }
+  String  { 
+             '"' (!["\\] | "\\" _)* '"' 
+            |"'" (!['\\] | "\\" _)* "'" 
+  }
+  space { $[ \t\n\r\u00A0\u200B]+ }
 }
 
 @skip  {space}

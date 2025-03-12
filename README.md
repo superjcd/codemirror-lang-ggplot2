@@ -21,3 +21,7 @@ import {Ggplot2} from "codemirror-lang-ggplot2"
   );
 ...
 ```
+
+
+### development
+reference: https://github.com/codemirror/lang-example

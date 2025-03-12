@@ -15,14 +15,16 @@ export const Ggplot2 = LRLanguage.define({
       }),
       styleTags({
         Identifier: t.variableName,
-        "ggplot": t.keyword,
-        "aes" : t.keyword,
+        AesIdentifier:t.attributeName,
+        value: t.attributeValue,
         GeomType: t.keyword,
         OptionType: t.keyword,
         Number: t.number,
         Boolean: t.bool,
         String: t.string,
         LineComment: t.lineComment,
+        "ggplot": t.keyword,
+        "aes" : t.keyword,
         "( )": t.paren
       })
     ]

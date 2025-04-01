@@ -37,6 +37,7 @@ AesIdentifier {
 | 'ymax'   // ribbon, link
 | 'xmin'   // link
 | 'xmax'   // link
+| 'path'   // tree
 }
 
 value {
@@ -69,6 +70,8 @@ GeomType {
 |  "geom_shiftx"
 |  "geom_cell"
 |  "geom_link"
+|  "geom_errorbar"
+|  "geom_tree"
 |  "annotate"
 }
 
@@ -118,6 +121,8 @@ PlotOptionType {
 | "labs"
 | "scale_x_log10"
 | "scale_y_log10"
+| "scale_x_reverse"
+| "scale_y_reverse"
 | "coord_flip"
 | "layout"
 | "theme"
